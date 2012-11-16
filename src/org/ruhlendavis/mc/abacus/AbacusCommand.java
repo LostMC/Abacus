@@ -29,8 +29,15 @@ public class AbacusCommand implements CommandExecutor
 					expression = expression + argument;
 				}
 				
-				Parser parser = new Parser(expression);
-				sender.sendMessage(ChatColor.GREEN + "Result: " + parser.getResult());
+				try 
+				{
+					Parser parser = new Parser(expression);
+					sender.sendMessage(ChatColor.GREEN + "Result: " + parser.getResult());
+				}
+				catch (ParserMathException e)
+				{
+					sender.sendMessage(ChatColor.RED + e.getMessage());
+				}
 			}
 			else
 			{

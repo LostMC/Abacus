@@ -112,7 +112,7 @@ public class Parser
 		}		
 	}
 	
-	private Stack<String> postfixExpression(List<String> tokens)
+	private Stack<String> postfixExpression(List<String> tokens) throws ParserMathException
 	{
 		Stack<String> outputStack = new Stack<String>();
 		Stack<String> operatorsStack = new Stack<String>();
@@ -151,13 +151,18 @@ public class Parser
 
 		while (!operatorsStack.isEmpty())
 		{
-			outputStack.add(0, operatorsStack.pop());
+			String item = operatorsStack.pop();
+			if (item.equals("("))
+			{
+				throw new ParserMathException("Mismatched grouping. Make sure your (), {}, [], <> match up.");
+			}
+			outputStack.add(0, item);
 		}
 
 		return outputStack;
 	}
 	
-	private Float evaluatePostfix(Stack<String> postfixStack)
+	private Float evaluatePostfix(Stack<String> postfixStack) throws ParserMathException
 	{
 		Stack<Float> operands = new Stack<Float>();
 
@@ -189,7 +194,7 @@ public class Parser
 			{
 				if (operands.size() < 2)
 				{
-					// TODO: error bailout!
+					throw new ParserMathException("Insufficient operands. Check your formula.");
 				}
 				
 				Float operand2 = operands.pop();
@@ -214,26 +219,27 @@ public class Parser
 					case '/': /* Division */
 						if (operand2 == 0)
 						{
-							// TODO: error warning
+							throw new ParserMathException("Division by zero not supported.");
 						}
 						else
 						{
-							operands.push(operand1 % operand2);
+							operands.push(operand1 / operand2);
 						}
 						break;
 					case '\\': /* Integer Division */
 						if (operand2 == 0)
 						{
-							// TODO: error warning
+							throw new ParserMathException("Integer division by zero not supported.");
 						}
 						else
 						{
 							operands.push(new Float(operand1.intValue() / operand2.intValue()));
 						}
+						break;
 					case '%': /* Modulus */
 						if (operand2 == 0)
 						{
-							// TODO: error warning
+							throw new ParserMathException("Modulus division by zero not supported.");
 						}
 						else
 						{
@@ -259,7 +265,7 @@ public class Parser
 		
 		int lastPosition = 0;
 		int currentPosition;
-		while ((currentPosition = find_first_of(expression, TOKENIZE_OPERATORS, lastPosition)) != -1)
+		while ((currentPosition = find_first_of(expression, separators, lastPosition)) != -1)
 		{
 			if (currentPosition != lastPosition)
 			{
