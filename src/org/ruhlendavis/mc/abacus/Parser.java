@@ -1,0 +1,354 @@
+package org.ruhlendavis.mc.abacus;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ *
+ * @author Feaelin
+ */
+public class Parser
+{
+	private final String PREPARE_OPERATORS = "d^*/\\%+-(),";
+	private final String TOKENIZE_OPERATORS = "d^*/\\%+_()";
+	private final String POSTFIX_OPERATORS = "d^*/\\%+_(";
+	private final String EVALUATE_OPERATORS =  "d^*/\\%+_";
+	private final int FULL_STACK = 64;
+	private final int SMALL_STACK = 16;
+
+	private String originalExpression = "";
+	private String preparedExpression = "";
+	private String [] subExpressions;
+	private String result;
+	
+	Parser(String expression)
+	{
+		setExpression(expression);
+	}
+	
+	public final void setExpression(String expression)
+	{
+		originalExpression = expression;
+		preparedExpression = "";
+		result = "";
+		prepareExpression();
+		subExpressions = preparedExpression.split(",");
+		
+		// parse each individual expression, reapplying the comma at the end.
+		for (String subExpression : subExpressions)
+		{
+			result = result + parseExpression(subExpression) + ", ";
+		}
+		
+		// Remove the extra comma & space.
+		result = result.substring(0, result.length() - 2);
+	}
+	
+	public String getResult()
+	{
+		return result;
+	}
+	
+	private String parseExpression(String expression)
+	{
+		boolean fullStackMode = false;
+		boolean partialStackMode = false;
+		
+		Float returnValue = new Float(0.0);
+
+		char character = expression.charAt(0);
+		
+		if (character == 's' || character == 'S')
+		{
+			fullStackMode = true;
+			expression = expression.substring(1, expression.length());
+		}
+		else if (character == 'p' || character == 'P')
+		{
+			partialStackMode = true;
+			expression = expression.substring(1, expression.length());
+		}
+		
+		if (expression.length() != 0)
+		{
+			List<String> tokens = tokenizeExpression(expression, TOKENIZE_OPERATORS);
+		
+			if (!tokens.isEmpty())
+			{
+				Stack<String> postfixStack = postfixExpression(tokens);
+				
+				if (!postfixStack.isEmpty())
+				{
+					returnValue = evaluatePostfix(postfixStack);
+				}
+			}
+		}
+		
+		if (fullStackMode || partialStackMode)
+		{
+			Integer stacks;
+			Integer remainder;
+			
+			if (fullStackMode)
+			{
+				stacks = returnValue.intValue() / FULL_STACK;
+				remainder = returnValue.intValue() % FULL_STACK;
+			}
+			else
+			{
+				stacks = returnValue.intValue() / SMALL_STACK;
+				remainder = returnValue.intValue() % SMALL_STACK;
+			}			
+			
+			return stacks.toString() + " stacks and "
+					 + remainder.toString() + " individual items.";			
+		}
+		else
+		{
+			return returnValue.toString().replace(".0", "");
+		}		
+	}
+	
+	private Stack<String> postfixExpression(List<String> tokens)
+	{
+		Stack<String> outputStack = new Stack<String>();
+		Stack<String> operatorsStack = new Stack<String>();
+
+		for (String token : tokens)
+		{
+			if (token.equals("("))
+			{
+				operatorsStack.push(token);
+			}
+			else if (token.equals(")"))
+			{
+				String item = operatorsStack.peek();
+				while (!operatorsStack.isEmpty() && !item.equals("("))
+				{
+					outputStack.add(0, item);
+					operatorsStack.pop();
+					item = operatorsStack.peek();
+				}
+				operatorsStack.pop();
+			}
+			else if (find_first_of(token, POSTFIX_OPERATORS, 0) != -1)
+			{
+				while (!operatorsStack.isEmpty()
+					 && (!isHigher(token.charAt(0),	operatorsStack.peek().charAt(0))))
+				{
+					outputStack.add(0, operatorsStack.pop());
+				}
+				operatorsStack.push(token);
+			}
+			else /* operand */
+			{
+				outputStack.add(0, token);
+			}
+		}
+
+		while (!operatorsStack.isEmpty())
+		{
+			outputStack.add(0, operatorsStack.pop());
+		}
+
+		return outputStack;
+	}
+	
+	private Float evaluatePostfix(Stack<String> postfixStack)
+	{
+		Stack<Float> operands = new Stack<Float>();
+
+		while (!postfixStack.isEmpty())
+		{	
+			String item = postfixStack.peek();
+			if (find_first_of(item, EVALUATE_OPERATORS, 0) == -1)
+			{
+				int index = item.lastIndexOf('s');
+				if (index == -1)
+				{
+					index = item.lastIndexOf('p');
+					if (index == -1)
+					{
+						operands.push(Float.parseFloat(item));
+					}
+					else
+					{
+						operands.push(Float.parseFloat(item.substring(0, index)) * SMALL_STACK);
+					}
+				}
+				else
+				{
+					operands.push(Float.parseFloat(item.substring(0, index)) * FULL_STACK);
+				}
+				postfixStack.pop();
+			}
+			else
+			{
+				if (operands.size() < 2)
+				{
+					// TODO: error bailout!
+				}
+				
+				Float operand2 = operands.pop();
+				Float operand1 = operands.pop();
+				int temp = 0;
+				
+				switch (postfixStack.pop().charAt(0))
+				{
+					case 'd': /* Random Number */
+						for (int i = 1; i <= operand1; i++)
+						{
+							temp = temp + randomNumber(1, operand2.intValue());
+						}
+						operands.push(new Float(temp));
+						break;
+					case '^': /* Power Operator */
+						operands.push(new Float(Math.pow(operand1, operand2)));
+						break;
+					case '*': /* Multiplication */
+						operands.push(operand1 * operand2);
+						break;
+					case '/': /* Division */
+						if (operand2 == 0)
+						{
+							// TODO: error warning
+						}
+						else
+						{
+							operands.push(operand1 % operand2);
+						}
+						break;
+					case '\\': /* Integer Division */
+						if (operand2 == 0)
+						{
+							// TODO: error warning
+						}
+						else
+						{
+							operands.push(new Float(operand1.intValue() / operand2.intValue()));
+						}
+					case '%': /* Modulus */
+						if (operand2 == 0)
+						{
+							// TODO: error warning
+						}
+						else
+						{
+							operands.push(operand1 % operand2);
+						}
+						break;
+					case '+': /* Addition */
+						operands.push(operand1 + operand2);
+						break;
+					case '_': /* Subtraction */
+						operands.push(operand1 - operand2);
+						break;
+				}
+			}
+		}
+		
+		return operands.pop();
+	}
+	
+	private List<String> tokenizeExpression(String expression, String separators)
+	{
+		List<String> tokens = new ArrayList<String>();
+		
+		int lastPosition = 0;
+		int currentPosition;
+		while ((currentPosition = find_first_of(expression, TOKENIZE_OPERATORS, lastPosition)) != -1)
+		{
+			if (currentPosition != lastPosition)
+			{
+				tokens.add(expression.substring(lastPosition, currentPosition));
+			}
+			tokens.add(expression.substring(currentPosition, currentPosition + 1));
+			lastPosition = currentPosition + 1;
+		}
+		
+		if (lastPosition < expression.length())
+		{
+			tokens.add(expression.substring(lastPosition, expression.length()));
+		}
+		
+		return tokens;
+	}
+	
+	public String prepareExpression()
+	{
+		if (preparedExpression.length() > 0)
+		{
+			return preparedExpression;
+		}
+		
+		// Whitespace? Chomp!
+		String s = originalExpression.replaceAll("\\s", "");
+		
+		// Difference between brackets merely visual -- make them all ()
+		s = s.replaceAll("\\{", "(").replaceAll("}", ")");
+		s = s.replaceAll("\\[", "(").replaceAll("]", ")");
+		s = s.replaceAll("<", "(").replaceAll(">", ")");
+		
+		// Replace minus operator symbols with _, without replacing negation
+		// operatorsStack.
+		Pattern p = Pattern.compile("([^" + Pattern.quote(PREPARE_OPERATORS) + "])-");
+		Matcher m = p.matcher(s);
+		s = m.replaceAll("$1_");
+		preparedExpression = s;
+		return s;
+	}
+	
+	private int find_first_of(String string, String characters, int startingPoint)
+	{
+		if (startingPoint >= string.length() || string.length() == 0)
+		{
+			return -1;
+		}
+		
+		for (int position = startingPoint; position < string.length(); position++)
+		{
+			if (characters.indexOf(string.charAt(position)) > -1)
+			{
+				return position;
+			}
+		}
+		
+		return -1;
+	}
+	
+		private boolean isHigher(char left, char right)
+	{
+		//	 OPERATORS		"d^*/%+_()"
+		switch (right)
+		{
+			case 'd':
+				return false;
+			case '^':
+				return (left == 'd');
+
+			case '*':
+			case '/':
+			case '%':
+			case '\\':
+				return (left == 'd' || left == '^');
+
+			case '+':
+			case '_':
+				return !(left == '(');
+				
+			case '(':
+				return true;
+			default :
+				return false;
+		}
+	}
+		
+	private int randomNumber(int min, int max)
+	{
+		return min + (int)(Math.random() * (max - min + 1));	
+	}
+}
+ //* 4. Alg.
