@@ -6,6 +6,7 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.ruhlendavis.utility.NumberTools;
+import org.ruhlendavis.utility.StringTools;
 
 /**
  * The engine for parsing mathematical expressions. Converts an infix
@@ -200,7 +201,7 @@ class Parser
 		
 		int lastPosition = 0;
 		int currentPosition;
-		while ((currentPosition = find_first_of(expression, separators, lastPosition)) != -1)
+		while ((currentPosition = StringTools.find_first_of(expression, separators, lastPosition)) != -1)
 		{
 			if (currentPosition != lastPosition)
 			{
@@ -247,7 +248,7 @@ class Parser
 				}
 				operatorsStack.pop();
 			}
-			else if (find_first_of(token, POSTFIX_OPERATORS, 0) != -1)
+			else if (StringTools.find_first_of(token, POSTFIX_OPERATORS, 0) != -1)
 			{
 				while (!operatorsStack.isEmpty()
 					 && (!isHigher(token.charAt(0),	operatorsStack.peek().charAt(0))))
@@ -289,7 +290,7 @@ class Parser
 		while (!postfixStack.isEmpty())
 		{	
 			String item = postfixStack.peek();
-			if (find_first_of(item, EVALUATE_OPERATORS, 0) == -1)
+			if (StringTools.find_first_of(item, EVALUATE_OPERATORS, 0) == -1)
 			{
 				int index = item.lastIndexOf('s');
 				if (index == -1)
@@ -377,33 +378,6 @@ class Parser
 		}
 		
 		return operands.pop();
-	}
-
-	/**
-	 *  Finds the first character in a String that matches any of the characters in
-	 *  another String
-	 *  @param string String containing the string to search.
-	 *  @param characters String containing the characters to search for.
-	 *  @param startingPoint int indicating where in the search string to start.
-	 *  @return int indicating the location in the search string of a character
-	 *              found.
-	 */
-	private int find_first_of(String string, String characters, int startingPoint)
-	{
-		if (startingPoint >= string.length() || string.length() == 0)
-		{
-			return -1;
-		}
-		
-		for (int position = startingPoint; position < string.length(); position++)
-		{
-			if (characters.indexOf(string.charAt(position)) > -1)
-			{
-				return position;
-			}
-		}
-		
-		return -1;
 	}
 	
 	/**
