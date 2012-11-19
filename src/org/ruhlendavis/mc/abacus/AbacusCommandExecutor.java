@@ -32,11 +32,24 @@ public class AbacusCommandExecutor implements CommandExecutor
 	{
 		if (command.getName().equalsIgnoreCase("abacus"))
 		{
+			// Make sure we have some arguments.
 			if (arguments.length > 0)
 			{
-				if (arguments[1].contains("wood") && arguments[1].contains("stair"))
+				// If the first argument is one of 'material/materia/materi/.../mat'
+				// then it is the material calculator call.
+				if (arguments[0].substring(0,3).equalsIgnoreCase("mat"))
 				{
-					sender.sendMessage(ChatColor.GREEN + computeMaterials(arguments[0], 134));
+					if (arguments.length == 3)
+					{
+						if (arguments[2].contains("wood") && arguments[2].contains("stair"))
+						{
+							sender.sendMessage(ChatColor.GREEN + computeMaterials(arguments[1], 134));
+						}						
+					}
+					else
+					{
+						sender.sendMessage(ChatColor.RED + "Usage: /abacus material <quantity> <material>");
+					}
 				}
 				else
 				{	
