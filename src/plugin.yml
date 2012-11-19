@@ -2,6 +2,8 @@ name: Abacus
 version: 0.9.1
 author: Feaelin <iain@ruhlendavis.org>
 description: Offers ability to perform calculations while in Minecraft
+website: http://dev.bukkit.org/server-mods/abacus/
+# Source: https://github.com/iain-davis/Abacus
 
 main: org.ruhlendavis.mc.abacus.Abacus
 
