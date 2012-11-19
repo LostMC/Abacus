@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.ruhlendavis.mc.abacus;
 
 import java.util.logging.Level;
@@ -9,8 +5,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.ruhlendavis.mc.utility.Log;
 
 /**
- *
- * @author Feaelin
+ * Bukkit Plugin entry point.
+ * 
+ * @author Feaelin (Iain E. Davis) <iain@ruhlendavis.org>
  */
 public class Abacus extends JavaPlugin
 {
@@ -27,8 +24,10 @@ public class Abacus extends JavaPlugin
 		log = new Log(this.getLogger());
 		log.setLevel(Level.INFO);
 
-		// This generates the default config.yml if the config.yml does not exist.
+		// This Bukkit method generates the default config.yml if the config.yml
+		// does not exist.
 		saveDefaultConfig();
+		
 		readConfig();
 		setupCommands();
   }

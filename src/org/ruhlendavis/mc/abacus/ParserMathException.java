@@ -1,20 +1,26 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.ruhlendavis.mc.abacus;
 
 /**
- *
- * @author Feaelin
+ * Provides a special exception class for the Parser to throw.
+ * 
+ * @author Feaelin (Iain E. Davis) <iain@ruhlendavis.org>
  */
 public class ParserMathException extends ArithmeticException
 {
+	/**
+	 * Basic constructor.
+	 */
 	ParserMathException()
 	{
 		super();
 	}
 
+	/**
+	 * Message constructor. Merely calls ArithmeticException constructor with the
+	 * message.
+	 * 
+	 * @param message Message for the thrown exception.
+	 */
 	ParserMathException(String message)
 	{
 		super(message);

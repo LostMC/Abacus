@@ -7,10 +7,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
- * @author Feaelin
+ * The engine for parsing mathematical expressions. Converts an infix
+ * expression to a postfix expression and then evaluates the postfix expression.
+ * 
+ * @author Feaelin (Iain E. Davis) <iain@ruhlendavis.org>
  */
-public class Parser
+class Parser
 {
 	private final String PREPARE_OPERATORS = "d^*/\\%+-(),";
 	private final String TOKENIZE_OPERATORS = "d^*/\\%+_()";
@@ -24,11 +26,47 @@ public class Parser
 	private String [] subExpressions;
 	private String result;
 	
+	/**
+	 * This constructor takes a single string to be evaluated.
+	 * 
+	 * @param expression String containing expression to evaluate.
+	 */
 	Parser(String expression)
 	{
 		setExpression(expression);
 	}
 	
+	/**
+	 * This constructor takes an array of Strings which will be concatenated and
+	 * then evaluated as if they are a single expression.
+	 * 
+	 * @param expressionArray Array of Strings to concatenate and evaluate.
+	 */
+	Parser(String [] expressionArray)
+	{
+			for (String expressionPart : expressionArray)
+			{
+				originalExpression = originalExpression + expressionPart;
+			}
+			
+			setExpression(originalExpression);
+	}
+
+	/**
+	 * Returns the evaluated result as a String.
+	 * 
+	 * @return String containing the result.
+	 */
+	public String getResult()
+	{
+		return result;
+	}
+	
+	/**
+	 * Provides a new expression and evaluates the new expression.
+	 * 
+	 * @param expression String containing the expression.
+	 */
 	public final void setExpression(String expression)
 	{
 		originalExpression = expression;
@@ -47,11 +85,13 @@ public class Parser
 		result = result.substring(0, result.length() - 2);
 	}
 	
-	public String getResult()
-	{
-		return result;
-	}
-	
+	/**
+	 * Dispatcher that calls each of the stages of the expression parsing,
+	 * conversion, and evaluation.
+	 * 
+	 * @param expression Expression to parse.
+	 * @return String containing the result.
+	 */
 	private String parseExpression(String expression)
 	{
 		boolean fullStackMode = false;
@@ -112,6 +152,78 @@ public class Parser
 		}		
 	}
 	
+	/**
+	 *  Prepares an expression for evaluation. Removes all whitespace (spaces,
+	 *  tabs, newlines, etc.), replaces grouping symbols with their () equivalents,
+	 *  replaces the subtraction operator with an underscore to make parsing
+	 *  easier at the later stages.
+	 * 
+	 * @return String containing the prepared expression.
+	 */
+	public String prepareExpression()
+	{
+		if (preparedExpression.length() > 0)
+		{
+			return preparedExpression;
+		}
+		
+		// Whitespace? Chomp!
+		String s = originalExpression.replaceAll("\\s", "");
+		
+		// Difference between brackets merely visual -- make them all ()
+		s = s.replaceAll("\\{", "(").replaceAll("}", ")");
+		s = s.replaceAll("\\[", "(").replaceAll("]", ")");
+		s = s.replaceAll("<", "(").replaceAll(">", ")");
+		
+		// Replace minus operator symbols with _, without replacing negation
+		// operatorsStack.
+		Pattern p = Pattern.compile("([^" + Pattern.quote(PREPARE_OPERATORS) + "])-");
+		Matcher m = p.matcher(s);
+		s = m.replaceAll("$1_");
+		preparedExpression = s;
+		return s;
+	}
+	
+	/**
+	 * Takes an expression and carves it up into 'tokens', an List of Strings
+	 * where each String is either a operand or operator, keeping the tokens
+	 * in the order presented in the expression.
+	 * 
+	 * @param expression String containing the expression.
+	 * @param separators String containing tokenizable symbols (e.g. the operators)
+	 * @return List<String> that contains the tokens.
+	 */
+	private List<String> tokenizeExpression(String expression, String separators)
+	{
+		List<String> tokens = new ArrayList<String>();
+		
+		int lastPosition = 0;
+		int currentPosition;
+		while ((currentPosition = find_first_of(expression, separators, lastPosition)) != -1)
+		{
+			if (currentPosition != lastPosition)
+			{
+				tokens.add(expression.substring(lastPosition, currentPosition));
+			}
+			tokens.add(expression.substring(currentPosition, currentPosition + 1));
+			lastPosition = currentPosition + 1;
+		}
+		
+		if (lastPosition < expression.length())
+		{
+			tokens.add(expression.substring(lastPosition, expression.length()));
+		}
+		
+		return tokens;
+	}
+	
+	/**
+	 * Converts a List of tokens in infix order to a Stack of tokens in postfix order.
+	 * 
+	 * @param tokens List<String> containing the expression in infix order.
+	 * @return Stack<String> containing the expression in postfix order.
+	 * @throws ParserMathException When grouping tokens are not matched.
+	 */
 	private Stack<String> postfixExpression(List<String> tokens) throws ParserMathException
 	{
 		Stack<String> outputStack = new Stack<String>();
@@ -162,6 +274,13 @@ public class Parser
 		return outputStack;
 	}
 	
+	/**
+	 * Evaluates an expression that is in postfix order.
+	 * 
+	 * @param postfixStack Stack<String> of tokens in postfix order.
+	 * @return Float containing the computed result.
+	 * @throws ParserMathException On divide by zero or insufficient arguments.
+	 */
 	private Float evaluatePostfix(Stack<String> postfixStack) throws ParserMathException
 	{
 		Stack<Float> operands = new Stack<Float>();
@@ -258,55 +377,16 @@ public class Parser
 		
 		return operands.pop();
 	}
-	
-	private List<String> tokenizeExpression(String expression, String separators)
-	{
-		List<String> tokens = new ArrayList<String>();
-		
-		int lastPosition = 0;
-		int currentPosition;
-		while ((currentPosition = find_first_of(expression, separators, lastPosition)) != -1)
-		{
-			if (currentPosition != lastPosition)
-			{
-				tokens.add(expression.substring(lastPosition, currentPosition));
-			}
-			tokens.add(expression.substring(currentPosition, currentPosition + 1));
-			lastPosition = currentPosition + 1;
-		}
-		
-		if (lastPosition < expression.length())
-		{
-			tokens.add(expression.substring(lastPosition, expression.length()));
-		}
-		
-		return tokens;
-	}
-	
-	public String prepareExpression()
-	{
-		if (preparedExpression.length() > 0)
-		{
-			return preparedExpression;
-		}
-		
-		// Whitespace? Chomp!
-		String s = originalExpression.replaceAll("\\s", "");
-		
-		// Difference between brackets merely visual -- make them all ()
-		s = s.replaceAll("\\{", "(").replaceAll("}", ")");
-		s = s.replaceAll("\\[", "(").replaceAll("]", ")");
-		s = s.replaceAll("<", "(").replaceAll(">", ")");
-		
-		// Replace minus operator symbols with _, without replacing negation
-		// operatorsStack.
-		Pattern p = Pattern.compile("([^" + Pattern.quote(PREPARE_OPERATORS) + "])-");
-		Matcher m = p.matcher(s);
-		s = m.replaceAll("$1_");
-		preparedExpression = s;
-		return s;
-	}
-	
+
+	/**
+	 *  Finds the first character in a String that matches any of the characters in
+	 *  another String
+	 *  @param string String containing the string to search.
+	 *  @param characters String containing the characters to search for.
+	 *  @param startingPoint int indicating where in the search string to start.
+	 *  @return int indicating the location in the search string of a character
+	 *              found.
+	 */
 	private int find_first_of(String string, String characters, int startingPoint)
 	{
 		if (startingPoint >= string.length() || string.length() == 0)
@@ -325,7 +405,14 @@ public class Parser
 		return -1;
 	}
 	
-		private boolean isHigher(char left, char right)
+	/**
+	 *  Determines whether a given operator is higher precedence than another
+	 *  
+	 * @param left char for one operator
+	 * @param right char for the other operator.
+	 * @return true if the left is higher than the right.
+	 */
+	private boolean isHigher(char left, char right)
 	{
 		//	 OPERATORS		"d^*/%+_()"
 		switch (right)
@@ -351,10 +438,17 @@ public class Parser
 				return false;
 		}
 	}
-		
-	private int randomNumber(int min, int max)
+	
+	/**
+	 * Returns a random number in a given range. This uses Math.random(), so
+	 * it only has Math.random()'s degree of randomness.
+	 * 
+	 * @param minimum Lowest possible number to return.
+	 * @param maximum Highest possible number to return.
+	 * @return The random number.
+	 */
+	private int randomNumber(int minimum, int maximum)
 	{
-		return min + (int)(Math.random() * (max - min + 1));	
+		return minimum + (int)(Math.random() * (maximum - minimum + 1));	
 	}
 }
- //* 4. Alg.
