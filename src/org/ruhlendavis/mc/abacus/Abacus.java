@@ -62,6 +62,6 @@ public class Abacus extends JavaPlugin
 	 */
 	private void setupCommands()
 	{
-		getCommand("abacus").setExecutor(new AbacusCommand());
+		getCommand("abacus").setExecutor(new AbacusCommandExecutor());
 	}
 }
