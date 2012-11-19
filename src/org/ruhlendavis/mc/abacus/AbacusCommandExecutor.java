@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.ruhlendavis.utility.NumberTools;
 
 /**
  * Command handler/dispatcher. Checks to see if the command issued is an
@@ -102,41 +103,11 @@ public class AbacusCommandExecutor implements CommandExecutor
 			case 134:
 			case 135:
 			case 136:
-				long planks = roundUpPositive(quantity, 4) * 6;
+				long planks = NumberTools.roundUpPositive(quantity, 4) * 6;
 				return quantity + " wooden stairs requires " + planks
-						 + " planks or " + roundUpPositive(planks, 4) + " logs.";
+						 + " planks or " + NumberTools.roundUpPositive(planks, 4) + " logs.";
 			default:
 				return "";
 		}
 	}
-	
-	/**
-	 *  Utility function to perform integer division that rounds up. This one is
-	 *  safe to use with negative numbers.
-	 * 
-	 * @param number			long integer, number to be divided.
-	 * @param divisor			long integer, number to divide by.
-	 * @return						long integer result.
-	 * @see #roundUpPositive
-	 */
-	private long roundUpAny(long number, long divisor)
-	{
-    int sign = (number > 0 ? 1 : -1) * (divisor > 0 ? 1 : -1);
-    return sign * (Math.abs(number) + Math.abs(divisor) - 1) / Math.abs(divisor);
-	}
-	
-	/**
-	 *  Utility function to perform integer division that rounds up.
-	 *  NOTE: Will not operate correctly on negative numbers, but is possibly
-	 *  faster than roundUpAny()
-	 * 
-	 * @param number			long integer, number to be divided.
-	 * @param divisor			long integer, number to divide by.
-	 * @return						long integer result.
-	 * @see #roundUpAny
-	 */
-	private long roundUpPositive(long number, long divisor)
-	{
-    return (number + divisor - 1) / divisor;
-	}	
 }

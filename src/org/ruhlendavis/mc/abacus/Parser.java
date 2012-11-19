@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.ruhlendavis.utility.NumberTools;
 
 /**
  * The engine for parsing mathematical expressions. Converts an infix
@@ -325,7 +326,7 @@ class Parser
 					case 'd': /* Random Number */
 						for (int i = 1; i <= operand1; i++)
 						{
-							temp = temp + randomNumber(1, operand2.intValue());
+							temp = temp + NumberTools.randomNumber(1, operand2.intValue());
 						}
 						operands.push(new Float(temp));
 						break;
@@ -437,18 +438,5 @@ class Parser
 			default :
 				return false;
 		}
-	}
-	
-	/**
-	 * Returns a random number in a given range. This uses Math.random(), so
-	 * it only has Math.random()'s degree of randomness.
-	 * 
-	 * @param minimum Lowest possible number to return.
-	 * @param maximum Highest possible number to return.
-	 * @return The random number.
-	 */
-	private int randomNumber(int minimum, int maximum)
-	{
-		return minimum + (int)(Math.random() * (maximum - minimum + 1));	
 	}
 }
