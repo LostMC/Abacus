@@ -1,6 +1,6 @@
 name: Abacus
 version: 0.9.1
-author: Feaelin <feaelin@kemenel.org>
+author: Feaelin <iain@ruhlendavis.org>
 description: Offers ability to perform calculations while in Minecraft
 
 main: org.ruhlendavis.mc.abacus.Abacus
