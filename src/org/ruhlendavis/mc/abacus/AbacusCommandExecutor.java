@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 
 /**
  * Command handler/dispatcher. Checks to see if the command issued is an
- * Abacus command and calls the appropiate methods.
+ * Abacus command and calls the appropriate methods.
  * 
  * @author Feaelin (Iain E. Davis) <iain@ruhlendavis.org>
  */
