@@ -37,9 +37,9 @@ public final class NumberTools
 	 * @param number			long integer, number to be divided.
 	 * @param divisor			long integer, number to divide by.
 	 * @return						long integer result.
-	 * @see #roundUpPositive
+	 * @see #divideRoundUpPositive
 	 */
-	public static long roundUpAny(long number, long divisor)
+	public static long divideRoundUpAny(long number, long divisor)
 	{
     int sign = (number > 0 ? 1 : -1) * (divisor > 0 ? 1 : -1);
     return sign * (Math.abs(number) + Math.abs(divisor) - 1) / Math.abs(divisor);
@@ -48,14 +48,14 @@ public final class NumberTools
 	/**
 	 *  Utility function to perform integer division that rounds up.
 	 *  NOTE: Will not operate correctly on negative numbers, but is possibly
-	 *  faster than roundUpAny()
+	 *  faster than divideRoundUpAny()
 	 * 
 	 * @param number			long integer, number to be divided.
 	 * @param divisor			long integer, number to divide by.
 	 * @return						long integer result.
-	 * @see #roundUpAny
+	 * @see #divideRoundUpAny
 	 */
-	public static long roundUpPositive(long number, long divisor)
+	public static long divideRoundUpPositive(long number, long divisor)
 	{
     return (number + divisor - 1) / divisor;
 	}	
