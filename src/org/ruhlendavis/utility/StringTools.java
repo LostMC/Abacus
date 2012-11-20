@@ -43,10 +43,6 @@ public final class StringTools
 	 */
 	public static int find_first_of(String string, String characters, int startingPoint)
 	{
-		if (startingPoint >= string.length() || string.length() == 0)
-		{
-			return -1;
-		}
 		for (int position = startingPoint; position < string.length(); position++)
 		{
 			if (characters.indexOf(string.charAt(position)) > -1)
@@ -55,5 +51,9 @@ public final class StringTools
 			}
 		}
 		return -1;
+	}
+	public static void main(String [] a)
+	{
+		System.out.println(StringTools.find_first_of("", "a", 0));
 	}
 }
