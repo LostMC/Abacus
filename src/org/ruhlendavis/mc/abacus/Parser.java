@@ -11,7 +11,7 @@ import org.ruhlendavis.utility.StringTools;
 /**
  * The engine for parsing mathematical expressions. Converts an infix
  * expression to a postfix expression and then evaluates the postfix expression.
- * 
+ *
  * @author Feaelin (Iain E. Davis) <iain@ruhlendavis.org>
  */
 class Parser
@@ -27,21 +27,21 @@ class Parser
 	private String preparedExpression = "";
 	private String [] subExpressions;
 	private String result;
-	
+
 	/**
 	 * This constructor takes a single string to be evaluated.
-	 * 
+	 *
 	 * @param expression String containing expression to evaluate.
 	 */
 	Parser(String expression)
 	{
 		setExpression(expression);
 	}
-	
+
 	/**
 	 * This constructor takes an array of Strings which will be concatenated and
 	 * then evaluated as if they are a single expression.
-	 * 
+	 *
 	 * @param expressionArray Array of Strings to concatenate and evaluate.
 	 */
 	Parser(String [] expressionArray)
@@ -50,23 +50,33 @@ class Parser
 			{
 				originalExpression = originalExpression + expressionPart;
 			}
-			
+
 			setExpression(originalExpression);
 	}
 
 	/**
+	 * Returns the expression as it was before any processing.
+	 *
+	 * @return String containing the expression.
+	 */
+	public String getOriginalExpression()
+	{
+		return originalExpression;
+	}
+
+	/**
 	 * Returns the evaluated result as a String.
-	 * 
+	 *
 	 * @return String containing the result.
 	 */
 	public String getResult()
 	{
 		return result;
 	}
-	
+
 	/**
 	 * Provides a new expression and evaluates the new expression.
-	 * 
+	 *
 	 * @param expression String containing the expression.
 	 */
 	public final void setExpression(String expression)
@@ -76,21 +86,21 @@ class Parser
 		result = "";
 		prepareExpression();
 		subExpressions = preparedExpression.split(",");
-		
+
 		// parse each individual expression, reapplying the comma at the end.
 		for (String subExpression : subExpressions)
 		{
 			result = result + parseExpression(subExpression) + ", ";
 		}
-		
+
 		// Remove the extra comma & space.
 		result = result.substring(0, result.length() - 2);
 	}
-	
+
 	/**
 	 * Dispatcher that calls each of the stages of the expression parsing,
 	 * conversion, and evaluation.
-	 * 
+	 *
 	 * @param expression Expression to parse.
 	 * @return String containing the result.
 	 */
@@ -98,11 +108,11 @@ class Parser
 	{
 		boolean fullStackMode = false;
 		boolean partialStackMode = false;
-		
+
 		Float returnValue = new Float(0.0);
 
 		char character = expression.charAt(0);
-		
+
 		if (character == 's' || character == 'S')
 		{
 			fullStackMode = true;
@@ -113,27 +123,27 @@ class Parser
 			partialStackMode = true;
 			expression = expression.substring(1, expression.length());
 		}
-		
+
 		if (expression.length() != 0)
 		{
 			List<String> tokens = tokenizeExpression(expression, TOKENIZE_OPERATORS);
-		
+
 			if (!tokens.isEmpty())
 			{
 				Stack<String> postfixStack = postfixExpression(tokens);
-				
+
 				if (!postfixStack.isEmpty())
 				{
 					returnValue = evaluatePostfix(postfixStack);
 				}
 			}
 		}
-		
+
 		if (fullStackMode || partialStackMode)
 		{
 			Integer stacks;
 			Integer remainder;
-			
+
 			if (fullStackMode)
 			{
 				stacks = returnValue.intValue() / FULL_STACK;
@@ -143,23 +153,23 @@ class Parser
 			{
 				stacks = returnValue.intValue() / SMALL_STACK;
 				remainder = returnValue.intValue() % SMALL_STACK;
-			}			
-			
+			}
+
 			return stacks.toString() + " stacks and "
-					 + remainder.toString() + " individual items.";			
+					 + remainder.toString() + " individual items.";
 		}
 		else
 		{
 			return returnValue.toString().replace(".0", "");
-		}		
+		}
 	}
-	
+
 	/**
 	 *  Prepares an expression for evaluation. Removes all whitespace (spaces,
 	 *  tabs, newlines, etc.), replaces grouping symbols with their () equivalents,
 	 *  replaces the subtraction operator with an underscore to make parsing
 	 *  easier at the later stages.
-	 * 
+	 *
 	 * @return String containing the prepared expression.
 	 */
 	public String prepareExpression()
@@ -168,15 +178,15 @@ class Parser
 		{
 			return preparedExpression;
 		}
-		
+
 		// Whitespace? Chomp!
 		String s = originalExpression.replaceAll("\\s", "");
-		
+
 		// Difference between brackets merely visual -- make them all ()
 		s = s.replaceAll("\\{", "(").replaceAll("}", ")");
 		s = s.replaceAll("\\[", "(").replaceAll("]", ")");
 		s = s.replaceAll("<", "(").replaceAll(">", ")");
-		
+
 		// Replace minus operator symbols with _, without replacing negation
 		// operatorsStack.
 		Pattern p = Pattern.compile("([^" + Pattern.quote(PREPARE_OPERATORS) + "])-");
@@ -185,12 +195,12 @@ class Parser
 		preparedExpression = s;
 		return s;
 	}
-	
+
 	/**
 	 * Takes an expression and carves it up into 'tokens', an List of Strings
 	 * where each String is either a operand or operator, keeping the tokens
 	 * in the order presented in the expression.
-	 * 
+	 *
 	 * @param expression String containing the expression.
 	 * @param separators String containing tokenizable symbols (e.g. the operators)
 	 * @return List<String> that contains the tokens.
@@ -198,7 +208,7 @@ class Parser
 	private List<String> tokenizeExpression(String expression, String separators)
 	{
 		List<String> tokens = new ArrayList<String>();
-		
+
 		int lastPosition = 0;
 		int currentPosition;
 		while ((currentPosition = StringTools.find_first_of(expression, separators, lastPosition)) != -1)
@@ -210,18 +220,18 @@ class Parser
 			tokens.add(expression.substring(currentPosition, currentPosition + 1));
 			lastPosition = currentPosition + 1;
 		}
-		
+
 		if (lastPosition < expression.length())
 		{
 			tokens.add(expression.substring(lastPosition, expression.length()));
 		}
-		
+
 		return tokens;
 	}
-	
+
 	/**
 	 * Converts a List of tokens in infix order to a Stack of tokens in postfix order.
-	 * 
+	 *
 	 * @param tokens List<String> containing the expression in infix order.
 	 * @return Stack<String> containing the expression in postfix order.
 	 * @throws ParserMathException When grouping tokens are not matched.
@@ -275,10 +285,10 @@ class Parser
 
 		return outputStack;
 	}
-	
+
 	/**
 	 * Evaluates an expression that is in postfix order.
-	 * 
+	 *
 	 * @param postfixStack Stack<String> of tokens in postfix order.
 	 * @return Float containing the computed result.
 	 * @throws ParserMathException On divide by zero or insufficient arguments.
@@ -288,7 +298,7 @@ class Parser
 		Stack<Float> operands = new Stack<Float>();
 
 		while (!postfixStack.isEmpty())
-		{	
+		{
 			String item = postfixStack.peek();
 			if (StringTools.find_first_of(item, EVALUATE_OPERATORS, 0) == -1)
 			{
@@ -317,11 +327,11 @@ class Parser
 				{
 					throw new ParserMathException("Insufficient operands. Check your formula.");
 				}
-				
+
 				Float operand2 = operands.pop();
 				Float operand1 = operands.pop();
 				int temp = 0;
-				
+
 				switch (postfixStack.pop().charAt(0))
 				{
 					case 'd': /* Random Number */
@@ -376,13 +386,13 @@ class Parser
 				}
 			}
 		}
-		
+
 		return operands.pop();
 	}
-	
+
 	/**
 	 *  Determines whether a given operator is higher precedence than another
-	 *  
+	 *
 	 * @param left char for one operator
 	 * @param right char for the other operator.
 	 * @return true if the left is higher than the right.
@@ -406,7 +416,7 @@ class Parser
 			case '+':
 			case '_':
 				return !(left == '(');
-				
+
 			case '(':
 				return true;
 			default :
