@@ -139,6 +139,34 @@ public class ParserTest
 	}
 
 	/**
+	 * Testing that the comma operator operates correctly.
+	 */
+	@Test
+	public void testCommaOperatorBasic()
+	{
+		String testString = "1,1";
+		String testResult = "1, 1";
+
+		Parser parser = new Parser(testString);
+
+		Assert.assertEquals(testResult, parser.getResult());
+	}
+
+	/**
+	 * Testing that the comma operator operates correctly.
+	 */
+	@Test
+	public void testCommaOperatorComplex()
+	{
+		String testString = "1+2,3*3";
+		String testResult = "3, 9";
+
+		Parser parser = new Parser(testString);
+
+		Assert.assertEquals(testResult, parser.getResult());
+	}
+
+	/**
 	 * Testing that the return from prepare string is consistent.
 	 */
 	@Test
