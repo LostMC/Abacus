@@ -104,9 +104,13 @@ public class AbacusCommandExecutor implements CommandExecutor
 			case 134:
 			case 135:
 			case 136:
-				long planks = NumberTools.divideRoundUpPositive(quantity, 4) * 6;
-				return quantity + " wooden stairs requires " + planks
-						 + " planks or " + NumberTools.divideRoundUpPositive(planks, 4) + " logs.";
+				long batches = NumberTools.divideRoundUpPositive(quantity, 4);
+				long planks = batches * 6;
+				long logs = NumberTools.divideRoundUpPositive(planks, 4);
+				return quantity + " wooden stairs requires " + batches
+						 + ((batches == 1) ? "batch" : " batches")
+						 + " or " + planks	 + ((planks == 1) ? "plank" : "planks" )
+						 + " or " + logs + ((logs == 1) ? "log" : "logs");
 			default:
 				return "";
 		}
