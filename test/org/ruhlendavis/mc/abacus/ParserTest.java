@@ -85,6 +85,28 @@ public class ParserTest {
 		Assert.assertEquals(testResult, parser.getResult());
 	}
 
+	@Test
+	public void testExpressionWithStackOperand()
+	{
+		String testString = "1s";
+		String testResult = "64";
+
+		Parser parser = new Parser(testString);
+
+		Assert.assertEquals(testResult, parser.getResult());
+	}
+
+	@Test
+	public void testExpressionWithPartialStackOperand()
+	{
+		String testString = "1p";
+		String testResult = "16";
+
+		Parser parser = new Parser(testString);
+
+		Assert.assertEquals(testResult, parser.getResult());
+	}
+
 	/**
 	 * Test of setExpression method, of class Parser.
 	 */
