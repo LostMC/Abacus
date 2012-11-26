@@ -10,11 +10,10 @@ package org.ruhlendavis.utility;
 public final class StringTools
 {
 	/**
-	 * Private constructor to prevent instantiation of the utility class.
+	 *  Empty Constructor. Merely a placeholder.
 	 */
-	private StringTools()
+	StringTools()
 	{
-		throw new AssertionError();
 	}
 
 	/**
