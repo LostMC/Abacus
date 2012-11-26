@@ -11,30 +11,39 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 
 /**
  *
  * @author iain
  */
-public class ParserTest {
+@PrepareForTest(Parser.class)
+public class ParserTest
+{
 
-	public ParserTest() {
+	public ParserTest()
+	{
 	}
 
 	@BeforeClass
-	public static void setUpClass() {
+	public static void setUpClass()
+	{
 	}
 
 	@AfterClass
-	public static void tearDownClass() {
+	public static void tearDownClass()
+	{
 	}
 
 	@Before
-	public void setUp() {
+	public void setUp()
+	{
 	}
 
 	@After
-	public void tearDown() {
+	public void tearDown()
+	{
 	}
 
 	/**
@@ -107,12 +116,41 @@ public class ParserTest {
 		Assert.assertEquals(testResult, parser.getResult());
 	}
 
+	@Test
+	public void testExpressionWithStackResult()
+	{
+		String testString = "s1";
+		String testResult = "0 stacks and 1 individual items.";
+
+		Parser parser = new Parser(testString);
+
+		Assert.assertEquals(testResult, parser.getResult());
+	}
+
+	@Test
+	public void testExpressionWithPartialStackResult()
+	{
+		String testString = "p1";
+		String testResult = "0 stacks and 1 individual items.";
+
+		Parser parser = new Parser(testString);
+
+		Assert.assertEquals(testResult, parser.getResult());
+	}
+
 	/**
 	 * Test of setExpression method, of class Parser.
 	 */
 	@Test
-	public void testSetExpression()
+	public void testPrepareExpressionReturn()
 	{
+		String testString = "1";
+		String testResult = "1";
+
+		Parser parser = new Parser(testString);
+
+		Assert.assertEquals(testResult, parser.getResult());
+		Assert.assertEquals(testResult, parser.prepareExpression());
 	}
 
 	/**
