@@ -24,29 +24,39 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PrepareForTest({NumberTools.class, Math.class})
 public class NumberToolsTest
 {
-	
+
 	public NumberToolsTest()
 	{
 	}
-	
+
 	@BeforeClass
 	public static void setUpClass()
 	{
 	}
-	
+
 	@AfterClass
 	public static void tearDownClass()
 	{
 	}
-	
+
 	@Before
 	public void setUp()
 	{
 	}
-	
+
 	@After
 	public void tearDown()
 	{
+	}
+
+	/**
+	 * Test of the constructor
+	 */
+	@Test
+	public void testNumberToolsConstructor()
+	{
+		NumberTools tool = new NumberTools();
+		Assert.assertTrue(tool instanceof NumberTools);
 	}
 
 	/**
@@ -57,9 +67,9 @@ public class NumberToolsTest
 	{
 		int minimum = 1;
 		int maximum = 10;
-		
+
 		PowerMockito.mockStatic(Math.class);
-		
+
 		when(Math.random()).thenReturn(0.0);
 		Assert.assertEquals("When random() produces 0.0, randomNumber should return 1",
 						            1, NumberTools.randomNumber(minimum, maximum));
@@ -69,7 +79,7 @@ public class NumberToolsTest
 		when(Math.random()).thenReturn(0.9);
 		Assert.assertEquals("When random() produces 0.9, randomNumber should return 10",
 						            10, NumberTools.randomNumber(minimum, maximum));
-		
+
 	}
 
 	/**
