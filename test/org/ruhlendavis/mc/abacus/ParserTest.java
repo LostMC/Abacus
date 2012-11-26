@@ -38,7 +38,21 @@ public class ParserTest {
 	}
 
 	/**
-	 * Test of Constructor, of class Parser.
+	 * Test of Constructor with an String argument, of class Parser.
+	 *
+	 */
+	@Test
+	public void testConstructorString()
+	{
+		String testString = "1+1";
+
+		Parser parser = new Parser(testString);
+
+		Assert.assertEquals(testString, parser.getOriginalExpression());
+	}
+
+	/**
+	 * Test of Constructor with an Array Arg, of class Parser.
 	 *
 	 */
 	@Test
@@ -63,6 +77,12 @@ public class ParserTest {
 	@Test
 	public void testGetResult()
 	{
+		String testString = "1+1";
+		String testResult = "2";
+
+		Parser parser = new Parser(testString);
+
+		Assert.assertEquals(testResult, parser.getResult());
 	}
 
 	/**
