@@ -139,7 +139,7 @@ public class ParserTest
 	}
 
 	/**
-	 * Test of setExpression method, of class Parser.
+	 * Testing that the return from prepare string is consistent.
 	 */
 	@Test
 	public void testPrepareExpressionReturn()
@@ -150,6 +150,20 @@ public class ParserTest
 		Parser parser = new Parser(testString);
 
 		Assert.assertEquals(testResult, parser.getResult());
+		Assert.assertEquals(testResult, parser.prepareExpression());
+	}
+
+	/**
+	 * Test that prepare string succeeds in stripping spaces.
+	 */
+	@Test
+	public void testPrepareExpressionStripsWhitespace()
+	{
+		String testString = "1 +\t1 *\n 3\n";
+		String testResult = "1+1*3";
+
+		Parser parser = new Parser(testString);
+
 		Assert.assertEquals(testResult, parser.prepareExpression());
 	}
 
