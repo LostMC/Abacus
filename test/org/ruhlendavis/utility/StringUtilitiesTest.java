@@ -22,11 +22,11 @@ import static org.junit.Assert.fail;
  * @author Feaelin
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(StringTools.class)
-public class StringToolsTest
+@PrepareForTest(StringUtilities.class)
+public class StringUtilitiesTest
 {
 
-	public StringToolsTest()
+	public StringUtilitiesTest()
 	{
 	}
 
@@ -56,8 +56,8 @@ public class StringToolsTest
 	@Test
 	public void testStringToolsConstructor()
 	{
-		StringTools tool = new StringTools();
-		Assert.assertTrue(tool instanceof StringTools);
+//		StringUtilities tool = new StringUtilities();
+//		Assert.assertTrue(tool instanceof StringUtilities);
 	}
 
 	/**
@@ -79,18 +79,18 @@ public class StringToolsTest
 	{
 		int position;
 
-		position = StringTools.find_first_of("", "a");
+		position = StringUtilities.find_first_of("", "a");
 		Assert.assertEquals("search on empty string should return -1", -1, position);
 
-		position = StringTools.find_first_of("alpha", "");
+		position = StringUtilities.find_first_of("alpha", "");
 		Assert.assertEquals("search with empty character string should return -1",
 						            -1, position);
 
-		position = StringTools.find_first_of("alpha", "z");
+		position = StringUtilities.find_first_of("alpha", "z");
 		Assert.assertEquals("search for 'z' in 'alpha' should return -1",
 						            -1, position);
 
-		position = StringTools.find_first_of("alpha", "p");
+		position = StringUtilities.find_first_of("alpha", "p");
 		Assert.assertEquals("search for 'p' in 'alpha' should return 2",
 						            2, position);
 
@@ -104,7 +104,7 @@ public class StringToolsTest
 	{
 		int position;
 
-		position = StringTools.find_first_of("alpha", "", 5);
+		position = StringUtilities.find_first_of("alpha", "", 5);
 		Assert.assertEquals("search start position greater than string length should return -1",
 						            -1, position);
 

@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.ruhlendavis.utility.NumberTools;
-import org.ruhlendavis.utility.StringTools;
+import org.ruhlendavis.utility.NumberUtilities;
+import org.ruhlendavis.utility.StringUtilities;
 
 /**
  * The engine for parsing mathematical expressions. Converts an infix
@@ -211,7 +211,7 @@ class Parser
 
 		int lastPosition = 0;
 		int currentPosition;
-		while ((currentPosition = StringTools.find_first_of(expression, separators, lastPosition)) != -1)
+		while ((currentPosition = StringUtilities.find_first_of(expression, separators, lastPosition)) != -1)
 		{
 			if (currentPosition != lastPosition)
 			{
@@ -258,7 +258,7 @@ class Parser
 				}
 				operatorsStack.pop();
 			}
-			else if (StringTools.find_first_of(token, POSTFIX_OPERATORS, 0) != -1)
+			else if (StringUtilities.find_first_of(token, POSTFIX_OPERATORS, 0) != -1)
 			{
 				while (!operatorsStack.isEmpty()
 					 && (!isHigher(token.charAt(0),	operatorsStack.peek().charAt(0))))
@@ -300,7 +300,7 @@ class Parser
 		while (!postfixStack.isEmpty())
 		{
 			String item = postfixStack.peek();
-			if (StringTools.find_first_of(item, EVALUATE_OPERATORS, 0) == -1)
+			if (StringUtilities.find_first_of(item, EVALUATE_OPERATORS, 0) == -1)
 			{
 				int index = item.lastIndexOf('s');
 				if (index == -1)
@@ -337,7 +337,7 @@ class Parser
 					case 'd': /* Random Number */
 						for (int i = 1; i <= operand1; i++)
 						{
-							temp = temp + NumberTools.randomNumber(1, operand2.intValue());
+							temp = temp + NumberUtilities.randomNumber(1, operand2.intValue());
 						}
 						operands.push(new Float(temp));
 						break;

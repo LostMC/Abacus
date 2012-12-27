@@ -21,11 +21,11 @@ import org.powermock.modules.junit4.PowerMockRunner;
  * @author Feaelin
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({NumberTools.class, Math.class})
-public class NumberToolsTest
+@PrepareForTest({NumberUtilities.class, Math.class})
+public class NumberUtilitiesTest
 {
 
-	public NumberToolsTest()
+	public NumberUtilitiesTest()
 	{
 	}
 
@@ -55,8 +55,8 @@ public class NumberToolsTest
 	@Test
 	public void testNumberToolsConstructor()
 	{
-		NumberTools tool = new NumberTools();
-		Assert.assertTrue(tool instanceof NumberTools);
+		NumberUtilities tool = new NumberUtilities();
+		Assert.assertTrue(tool instanceof NumberUtilities);
 	}
 
 	/**
@@ -72,13 +72,13 @@ public class NumberToolsTest
 
 		when(Math.random()).thenReturn(0.0);
 		Assert.assertEquals("When random() produces 0.0, randomNumber should return 1",
-						            1, NumberTools.randomNumber(minimum, maximum));
+						            1, NumberUtilities.randomNumber(minimum, maximum));
 		when(Math.random()).thenReturn(0.5);
 		Assert.assertEquals("When random() produces 0.5, randomNumber should return 6",
-						            6, NumberTools.randomNumber(minimum, maximum));
+						            6, NumberUtilities.randomNumber(minimum, maximum));
 		when(Math.random()).thenReturn(0.9);
 		Assert.assertEquals("When random() produces 0.9, randomNumber should return 10",
-						            10, NumberTools.randomNumber(minimum, maximum));
+						            10, NumberUtilities.randomNumber(minimum, maximum));
 
 	}
 
@@ -89,15 +89,15 @@ public class NumberToolsTest
 	public void testDivideRoundUpAny()
 	{
 		Assert.assertEquals("1 divided by 2 should equal 1", 1,
-						            NumberTools.divideRoundUpAny(1, 2));
+						            NumberUtilities.divideRoundUpAny(1, 2));
 		Assert.assertEquals("2 divided by 2 should equal 1", 1,
-						            NumberTools.divideRoundUpAny(2, 2));
+						            NumberUtilities.divideRoundUpAny(2, 2));
 		Assert.assertEquals("2 divided by -2 should equal -1", -1,
-						            NumberTools.divideRoundUpAny(2, -2));
+						            NumberUtilities.divideRoundUpAny(2, -2));
 		Assert.assertEquals("-2 divided by -2 should equal 1", 1,
-						            NumberTools.divideRoundUpAny(-2, -2));
+						            NumberUtilities.divideRoundUpAny(-2, -2));
 		Assert.assertEquals("1 divided by -2 should equal -1", -1,
-						            NumberTools.divideRoundUpAny(1, -2));
+						            NumberUtilities.divideRoundUpAny(1, -2));
 	}
 
 	/**
@@ -107,8 +107,8 @@ public class NumberToolsTest
 	public void testDivideRoundUpPositive()
 	{
 		Assert.assertEquals("1 divided by 2 should equal 1", 1,
-						            NumberTools.divideRoundUpPositive(1, 2));
+						            NumberUtilities.divideRoundUpPositive(1, 2));
 		Assert.assertEquals("2 divided by 2 should equal 1", 1,
-						            NumberTools.divideRoundUpPositive(2, 2));
+						            NumberUtilities.divideRoundUpPositive(2, 2));
 	}
 }

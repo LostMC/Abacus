@@ -7,12 +7,12 @@ package org.ruhlendavis.utility;
  *
  * @author Feaelin (Iain E. Davis) <iain@ruhlendavis.org>
  */
-public final class NumberTools
+public final class NumberUtilities
 {
 	/**
 	 * Empty constructor for NumberTools.
 	 */
-	NumberTools()
+	NumberUtilities()
 	{
 	}
 

@@ -5,7 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.ruhlendavis.utility.NumberTools;
+import org.ruhlendavis.utility.NumberUtilities;
 
 /**
  * Command handler/dispatcher. Checks to see if the command issued is an
@@ -104,9 +104,9 @@ public class AbacusCommandExecutor implements CommandExecutor
 			case 134:
 			case 135:
 			case 136:
-				long batches = NumberTools.divideRoundUpPositive(quantity, 4);
+				long batches = NumberUtilities.divideRoundUpPositive(quantity, 4);
 				long planks = batches * 6;
-				long logs = NumberTools.divideRoundUpPositive(planks, 4);
+				long logs = NumberUtilities.divideRoundUpPositive(planks, 4);
 				return quantity + " wooden "
 						 + ((quantity == 1) ? " stair " : " stairs") + " requires "
 						 + batches + ((batches == 1) ? " batch" : " batches")
