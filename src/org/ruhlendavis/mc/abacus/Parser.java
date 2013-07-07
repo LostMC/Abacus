@@ -187,11 +187,16 @@ class Parser
 		s = s.replaceAll("\\[", "(").replaceAll("]", ")");
 		s = s.replaceAll("<", "(").replaceAll(">", ")");
 
+		// Replace 3(6+3) with 3*(6+3)
+		Pattern pattern = Pattern.compile("(\\d+)\\(");
+		Matcher matcher = pattern.matcher(s);
+		s = matcher.replaceAll("$1*(");
+		
 		// Replace minus operator symbols with _, without replacing negation
-		// operatorsStack.
-		Pattern p = Pattern.compile("([^" + Pattern.quote(PREPARE_OPERATORS) + "])-");
-		Matcher m = p.matcher(s);
-		s = m.replaceAll("$1_");
+		// operators.
+		pattern = Pattern.compile("([^" + Pattern.quote(PREPARE_OPERATORS) + "])-");
+		matcher = pattern.matcher(s);
+		s = matcher.replaceAll("$1_");
 		preparedExpression = s;
 		return s;
 	}
@@ -225,7 +230,6 @@ class Parser
 		{
 			tokens.add(expression.substring(lastPosition, expression.length()));
 		}
-
 		return tokens;
 	}
 
@@ -300,6 +304,7 @@ class Parser
 		while (!postfixStack.isEmpty())
 		{
 			String item = postfixStack.peek();
+
 			if (StringUtilities.find_first_of(item, EVALUATE_OPERATORS, 0) == -1)
 			{
 				int index = item.lastIndexOf('s');
