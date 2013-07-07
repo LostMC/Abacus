@@ -19,3 +19,5 @@ nb-configuration.xml
 *.log
 *.aux
 coverage
+thumbs.db
+
