@@ -16,7 +16,7 @@ import org.ruhlendavis.utility.StringUtilities;
  */
 class Parser
 {
-	private final String PREPARE_OPERATORS = "d^*/\\%+-(),";
+	private final String PREPARE_OPERATORS = "d^*/\\%+-(,";
 	private final String TOKENIZE_OPERATORS = "d^*/\\%+_()";
 	private final String POSTFIX_OPERATORS = "d^*/\\%+_(";
 	private final String EVALUATE_OPERATORS =  "d^*/\\%+_";
@@ -192,11 +192,28 @@ class Parser
 		Matcher matcher = pattern.matcher(s);
 		s = matcher.replaceAll("$1*(");
 		
-		// Replace minus operator symbols with _, without replacing negation
-		// operators.
-		pattern = Pattern.compile("([^" + Pattern.quote(PREPARE_OPERATORS) + "])-");
+		// Replace (6+3)3 with (6+3)*3
+		pattern = Pattern.compile("\\)(\\d+)");
 		matcher = pattern.matcher(s);
-		s = matcher.replaceAll("$1_");
+		s = matcher.replaceAll(")*$1");
+		
+		s = s.replaceAll("\\)\\(", ")*(");
+		
+		// Replace negation operators with ~
+		if (s.charAt(0) == '-')
+		{
+			s = "~" + s.substring(1, s.length());
+		}
+		
+		pattern = Pattern.compile("([" + Pattern.quote(PREPARE_OPERATORS) +"])-");
+		matcher = pattern.matcher(s);
+		s = matcher.replaceAll("$1~");
+		
+		// Replace minus operator symbols with _
+		s = s.replaceAll("-", "_");
+		
+		// Restore negation symbols
+		s = s.replaceAll("~", "-");
 		preparedExpression = s;
 		return s;
 	}
