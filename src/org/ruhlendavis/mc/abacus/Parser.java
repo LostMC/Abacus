@@ -281,8 +281,7 @@ class Parser
 			}
 			else if (StringUtilities.find_first_of(token, POSTFIX_OPERATORS, 0) != -1)
 			{
-				while (!operatorsStack.isEmpty()
-					 && (!isHigher(token.charAt(0),	operatorsStack.peek().charAt(0))))
+				while (!operatorsStack.isEmpty() && !isHigher(token.charAt(0),	operatorsStack.peek().charAt(0)))
 				{
 					outputStack.add(0, operatorsStack.pop());
 				}
@@ -427,13 +426,13 @@ class Parser
 			case 'd':
 				return false;
 			case '^':
-				return (left == 'd');
+				return left == 'd';
 
 			case '*':
 			case '/':
 			case '%':
 			case '\\':
-				return (left == 'd' || left == '^');
+				return left == 'd' || left == '^';
 
 			case '+':
 			case '_':

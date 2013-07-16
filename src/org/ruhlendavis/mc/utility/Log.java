@@ -12,8 +12,8 @@ import java.util.logging.Logger;
 public class Log
 {
 	@SuppressWarnings("NonConstantLogger")
-	private static java.util.logging.Logger log;
-	private static java.util.logging.Level level;
+	private static Logger log;
+	private static Level level;
 	
 	/**
 	 * Constructor for only passing in reference to the logger object.
