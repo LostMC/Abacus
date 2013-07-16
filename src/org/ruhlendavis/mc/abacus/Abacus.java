@@ -48,10 +48,7 @@ public class Abacus extends JavaPlugin
 	private void readConfig()
 	{
 		log.config("Reading configuration file");
-		if (this.getConfig().getString("log-level") == null
-			||this.getConfig().getString("log-level").isEmpty())
-		{}
-		else
+		if (this.getConfig().getString("log-level") != null && !this.getConfig().getString("log-level").isEmpty())
 		{
 			log.setLevel(this.getConfig().getString("log-level"));
 		}
