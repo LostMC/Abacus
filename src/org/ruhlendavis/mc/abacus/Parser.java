@@ -77,22 +77,19 @@ class Parser
 	/**
 	 * Provides a new expression and evaluates the new expression.
 	 *
-	 * @param expression String containing the expression.
+	 * @param expressionText String containing the expression.
 	 */
-	public final void setExpression(String expression)
+	public final void setExpression(String expressionText)
 	{
-		originalExpression = expression;
-		preparedExpression = "";
 		result = "";
-		prepareExpression();
-		subExpressions = preparedExpression.split(",");
-
-		// parse each individual expression, reapplying the comma at the end.
-		for (String subExpression : subExpressions)
+		
+		for (String subExpression : expressionText.split(","))
 		{
-			result = result + parseExpression(subExpression) + ", ";
+			Expression expression = new Expression(subExpression);
+			expression.evaluate();
+			result = result + parseExpression(expression) + ", ";
 		}
-
+		
 		// Remove the extra comma & space.
 		result = result.substring(0, result.length() - 2);
 	}
@@ -104,29 +101,13 @@ class Parser
 	 * @param expression Expression to parse.
 	 * @return String containing the result.
 	 */
-	private String parseExpression(String expression)
+	private String parseExpression(Expression expression)
 	{
-		boolean fullStackMode = false;
-		boolean partialStackMode = false;
-
 		Float returnValue = new Float(0.0);
 
-		char character = expression.charAt(0);
-
-		if (character == 's' || character == 'S')
+		if (expression.getPreparedText().length() != 0)
 		{
-			fullStackMode = true;
-			expression = expression.substring(1, expression.length());
-		}
-		else if (character == 'p' || character == 'P')
-		{
-			partialStackMode = true;
-			expression = expression.substring(1, expression.length());
-		}
-
-		if (expression.length() != 0)
-		{
-			List<String> tokens = tokenizeExpression(expression, TOKENIZE_OPERATORS);
+			List<String> tokens = expression.getTokens();
 
 			if (!tokens.isEmpty())
 			{
@@ -139,12 +120,12 @@ class Parser
 			}
 		}
 
-		if (fullStackMode || partialStackMode)
+		if (expression.getStackType() == StackType.FULL || expression.getStackType() == StackType.PARTIAL)
 		{
 			Integer stacks;
 			Integer remainder;
 
-			if (fullStackMode)
+			if (expression.getStackType() == StackType.FULL)
 			{
 				stacks = returnValue.intValue() / FULL_STACK;
 				remainder = returnValue.intValue() % FULL_STACK;
@@ -227,7 +208,7 @@ class Parser
 	 * @param separators String containing tokenizable symbols (e.g. the operators)
 	 * @return List<String> that contains the tokens.
 	 */
-	private List<String> tokenizeExpression(String expression, String separators)
+	public List<String> tokenizeExpression(String expression, String separators)
 	{
 		List<String> tokens = new ArrayList<String>();
 
@@ -257,7 +238,7 @@ class Parser
 	 * @return Stack<String> containing the expression in postfix order.
 	 * @throws ParserMathException When grouping tokens are not matched.
 	 */
-	private Stack<String> postfixExpression(List<String> tokens) throws ParserMathException
+	public Stack<String> postfixExpression(List<String> tokens) throws ParserMathException
 	{
 		Stack<String> outputStack = new Stack<String>();
 		Stack<String> operatorsStack = new Stack<String>();
@@ -285,7 +266,7 @@ class Parser
 				{
 					outputStack.add(0, operatorsStack.pop());
 				}
-				operatorsStack.push(token);
+				operatorsStack.add(0, token);
 			}
 			else /* operand */
 			{
