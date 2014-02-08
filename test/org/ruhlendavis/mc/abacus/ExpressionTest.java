@@ -277,4 +277,98 @@ public class ExpressionTest
 			}
 		}
 	}
+	
+	@Test
+	public void ihDIsNotHigherThanD()
+	{
+		assertFalse(Expression.isHigher('d', 'd'));
+	}
+	
+	@Test
+	public void ihDIsHigherThanOtherOperators()
+	{
+		String operators = "^*/%+(";
+		
+		for (char operator : operators.toCharArray())
+		{
+			System.out.println(operator);
+			assertTrue(Expression.isHigher('d', operator));
+			assertFalse(Expression.isHigher(operator, 'd'));
+		}
+	}
+	
+	@Test
+	public void ihExponentIsNotHigherThanExponent()
+	{
+		assertFalse(Expression.isHigher('^', '^'));
+	}
+
+	@Test
+	public void ihExponentHigherThanMostOtherOperators()
+	{
+		String operators = "*/%+(";
+		
+		for (char operator : operators.toCharArray())
+		{
+			System.out.println(operator);
+			assertTrue(Expression.isHigher('^', operator));
+			assertFalse(Expression.isHigher(operator, '^'));
+		}		
+	}
+	
+	@Test
+	public void ihMultiplyIsNotHigherThanMultiply()
+	{
+		assertFalse(Expression.isHigher('*', '*'));
+	}
+	
+	@Test
+	public void ihMultiplyIsNotHigherThanModulus()
+	{
+		assertFalse(Expression.isHigher('*', '%'));
+	}
+	
+	@Test
+	public void ihMultiplyIsNotHigherThanDivide()
+	{
+		assertFalse(Expression.isHigher('*', '/'));
+	}
+	
+	@Test
+	public void ihMultiplyIsNotHigherThanIntegerDivide()
+	{
+		assertFalse(Expression.isHigher('*', '\\'));
+	}
+	
+	@Test
+	public void ihMultiplyHigherThanRemainingOperators()
+	{
+		String operators = "+(";
+		
+		for (char operator : operators.toCharArray())
+		{
+			System.out.println(operator);
+			assertTrue(Expression.isHigher('^', operator));
+			assertFalse(Expression.isHigher(operator, '^'));
+		}		
+	}
+	
+	@Test
+	public void ihAddIsNotHigherThanAdd()
+	{
+		assertFalse(Expression.isHigher('+', '+'));
+	}
+	
+	@Test
+	public void ihAddIsHigherThanLeftParen()
+	{
+		assertTrue(Expression.isHigher('+', '('));
+		assertFalse(Expression.isHigher('(', '+'));
+	}
+
+	@Test
+	public void ihLeftParenIsNotHigherThanLeftParen()
+	{
+		assertFalse(Expression.isHigher('(', '('));
+	}
 }

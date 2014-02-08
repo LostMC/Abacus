@@ -262,7 +262,7 @@ class Parser
 			}
 			else if (StringUtilities.find_first_of(token, POSTFIX_OPERATORS, 0) != -1)
 			{
-				while (!operatorsStack.isEmpty() && !isHigher(token.charAt(0),	operatorsStack.peek().charAt(0)))
+				while (!operatorsStack.isEmpty() && !Expression.isHigher(token.charAt(0),	operatorsStack.peek().charAt(0)))
 				{
 					outputStack.add(0, operatorsStack.pop());
 				}

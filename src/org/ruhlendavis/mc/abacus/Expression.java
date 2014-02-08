@@ -127,6 +127,39 @@ public class Expression
 		}
 	}
 
+	/**
+	 *  Determines whether a given operator is higher precedence than another
+	 *
+	 * @param left char for one operator
+	 * @param right char for the other operator.
+	 * @return true if the left is higher than the right.
+	 */
+	public static boolean isHigher(char left, char right)
+	{
+		//	 OPERATORS		"d^*/%+()"
+		switch (right)
+		{
+			case 'd':
+				return false;
+			case '^':
+				return left == 'd';
+
+			case '*':
+			case '/':
+			case '%':
+			case '\\':
+				return left == 'd' || left == '^';
+
+			case '+':
+				return !(left == '+') && !(left == '(');
+
+			case '(':
+				return !(left == '(');
+			default :
+				return false;
+		}
+	}
+	
 	public String getOriginalText()
 	{
 		return originalText;
