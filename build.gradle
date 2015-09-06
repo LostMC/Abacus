@@ -2,11 +2,22 @@ group 'org.lostmc'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'idea'
 
 repositories {
     mavenCentral()
+    maven {
+        url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
+    }
 }
 
+def excludeHamcrest = { exclude module: 'hamcrest-core' }
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT', {
+        exclude module: 'json-simple'
+        exclude module: 'bungeecord-chat'
+    }
+
+    testCompile 'junit:junit:4.12', excludeHamcrest
+    testCompile 'org.hamcrest:hamcrest-all:1.3'
 }
