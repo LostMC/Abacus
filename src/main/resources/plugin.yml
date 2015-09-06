@@ -1,0 +1,21 @@
+name: Abacus
+version: 1.1.1.91
+author: Feaelin <iain@ruhlendavis.org>
+description: Offers ability to perform calculations while in Minecraft
+website: http://dev.bukkit.org/server-mods/abacus/
+# Source: https://github.com/iain-davis/Abacus
+
+main: org.ruhlendavis.mc.abacus.Abacus
+
+commands:
+  abacus:
+    description: Do math inside of Minecraft!
+    permission: abacus.abacus
+    permission-message: "§cYou do not have access to that command."
+permissions:
+  abacus.*:
+    description: Access for all abacus commands.
+    default: op
+  abacus.abacus:
+    description: Allows the use of the abacus command.
+    default: true
