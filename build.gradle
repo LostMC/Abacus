@@ -2,7 +2,15 @@ group 'org.lostmc'
 version '1.1.2-SNAPSHOT'
 
 apply plugin: 'java'
-apply plugin: 'idea'
+apply plugin: 'provided-base'
+
+buildscript {
+    repositories { jcenter() }
+
+    dependencies {
+        classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:2.2.+'
+    }
+}
 
 repositories {
     mavenCentral()
@@ -13,9 +21,14 @@ repositories {
 
 def excludeHamcrest = { exclude module: 'hamcrest-core' }
 dependencies {
-    compile 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT', {
+    provided 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT', {
         exclude module: 'json-simple'
         exclude module: 'bungeecord-chat'
+        exclude module: 'guava'
+        exclude module: 'commons-lang'
+        exclude module: 'gson'
+        exclude module: 'ebean'
+        exclude module: 'snakeyaml'
     }
 
     testCompile 'junit:junit:4.12', excludeHamcrest
