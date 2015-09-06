@@ -72,8 +72,8 @@ public class Expression {
         originalText = "";
         preparedText = "";
         stackType = StackType.NONE;
-        tokens = new ArrayList<String>();
-        postfixStack = new Stack<String>();
+        tokens = new ArrayList<>();
+        postfixStack = new Stack<>();
     }
 
     public String evaluate() {
@@ -114,7 +114,7 @@ public class Expression {
                 for (int i = 1; i <= operand1; i++) {
                     temp = temp + NumberUtilities.randomNumber(1, operand2.intValue());
                 }
-                operands.push(new Float(temp));
+                operands.push((float)temp);
                 break;
             case '^': /* Power Operator */
                 operands.push(new Float(Math.pow(operand1, operand2)));
@@ -133,7 +133,7 @@ public class Expression {
                 if (operand2 == 0) {
                     throw new MathException("Integer division by zero not supported.");
                 } else {
-                    operands.push(new Float(operand1.intValue() / operand2.intValue()));
+                    operands.push((float)(operand1.intValue() / operand2.intValue()));
                 }
                 break;
             case '%': /* Modulus */
@@ -224,7 +224,7 @@ public class Expression {
     }
 
     private void postfix() throws MathException {
-        Stack<String> operatorStack = new Stack();
+        Stack<String> operatorStack = new Stack<>();
 
         for (String token : tokens) {
             if (token.equals("(")) {
@@ -286,10 +286,10 @@ public class Expression {
 
     private Float evaluatePostfix() throws NumberFormatException, MathException {
         if (postfixStack.isEmpty()) {
-            return new Float(0);
+            return (float) 0;
         }
 
-        Stack<Float> operands = new Stack<Float>();
+        Stack<Float> operands = new Stack<>();
 
         while (!postfixStack.isEmpty()) {
             String item = postfixStack.peek();
