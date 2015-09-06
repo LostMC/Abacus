@@ -5,7 +5,7 @@ description: Offers ability to perform calculations while in Minecraft
 website: http://dev.bukkit.org/server-mods/abacus/
 # Source: https://github.com/LostMC/Abacus
 
-main: org.ruhlendavis.mc.abacus.Abacus
+main: org.lostmc.abacus.Abacus
 
 commands:
   abacus:
