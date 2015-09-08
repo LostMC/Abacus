@@ -25,12 +25,13 @@ public class Abacus extends JavaPlugin {
 
     private void readConfig() {
         log.config("Reading configuration file");
-        if (getConfig().getString("log-level") != null && !getConfig().getString("log-level").isEmpty()) {
-            log.setLevel(getConfig().getString("log-level"));
+        String logLevel = getConfig().getString("log-level");
+        if (logLevel != null && !logLevel.isEmpty()) {
+            log.setLevel(logLevel);
         }
     }
 
     private void setupCommands() {
-        getCommand("abacus").setExecutor(new AbacusCommandExecutor());
+        getCommand("abacus").setExecutor(new AbacusCommandExecutor(new CommandParser()));
     }
 }

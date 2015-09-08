@@ -315,7 +315,6 @@ public class ExpressionTest {
         String operators = "+";
 
         for (char operator : operators.toCharArray()) {
-            System.out.println(operator);
             assertTrue(Expression.isHigherPriority('^', operator));
             assertFalse(Expression.isHigherPriority(operator, '^'));
         }
