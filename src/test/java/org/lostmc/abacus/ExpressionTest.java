@@ -1,11 +1,15 @@
-package utility;
+package org.lostmc.abacus;
 
 import org.junit.Test;
-import org.lostmc.abacus.Expression;
-import org.lostmc.abacus.MathException;
-import org.lostmc.abacus.StackType;
+import utility.NumberUtilities;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ExpressionTest {
     private Expression expression = new Expression();
@@ -464,5 +468,33 @@ public class ExpressionTest {
         } catch (MathException exception) {
             assertEquals("Insufficient operands. Check your formula.", exception.getMessage());
         }
+    }
+
+    @Test
+    public void evaluatePrintsFullNumber() {
+        String expressionText = "100000000000000";
+        expression.setExpression(expressionText);
+        assertThat(expression.evaluate(), equalTo("100,000,000,000,000"));
+    }
+
+    @Test
+    public void evaluatePrintsCorrectNumberStack() {
+        String expressionText = "s64";
+        expression.setExpression(expressionText);
+        assertThat(expression.evaluate(), equalTo("1 stacks and 0 individual items."));
+    }
+
+    @Test
+    public void evaluatePrintsFullNumberStackMode() {
+        String expressionText = "s100000000000000s + 63";
+        expression.setExpression(expressionText);
+        assertThat(expression.evaluate(), equalTo("100,000,000,000,000 stacks and 63 individual items."));
+    }
+
+    @Test
+    public void evaluatePrintsFullNumberStackModePartial() {
+        String expressionText = "p100000000000000p + 63";
+        expression.setExpression(expressionText);
+        assertThat(expression.evaluate(), equalTo("100,000,000,000,003 stacks and 15 individual items."));
     }
 }

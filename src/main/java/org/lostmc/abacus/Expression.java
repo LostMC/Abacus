@@ -1,8 +1,11 @@
 package org.lostmc.abacus;
 
+import javafx.util.converter.BigDecimalStringConverter;
 import utility.NumberUtilities;
 import utility.StringUtilities;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -77,74 +80,72 @@ public class Expression {
     }
 
     public String evaluate() {
+        NumberFormat formatter = NumberFormat.getNumberInstance();
         prepare();
         tokenize();
         postfix();
-        Float value = evaluatePostfix();
+        BigDecimal value = evaluatePostfix();
 
         if (getStackType() == StackType.FULL || getStackType() == StackType.PARTIAL) {
-            Integer stacks;
-            Integer remainder;
-
+            int divisor;
             if (getStackType() == StackType.FULL) {
-                stacks = value.intValue() / FULL_STACK;
-                remainder = value.intValue() % FULL_STACK;
+                divisor = FULL_STACK;
             } else {
-                stacks = value.intValue() / SMALL_STACK;
-                remainder = value.intValue() % SMALL_STACK;
+                divisor = SMALL_STACK;
             }
+            BigDecimal[] result = value.divideAndRemainder(new BigDecimal(divisor));
 
-            return stacks.toString() + " stacks and " + remainder.toString() + " individual items.";
+            return formatter.format(result[0]) + " stacks and " + formatter.format(result[1]) + " individual items.";
         } else {
-            return value.toString().replace(".0", "");
+            return formatter.format(value);
         }
     }
 
-    private void evaluateBinaryOperator(Stack<Float> operands, Stack<String> postfixStack) throws MathException {
+    private void evaluateBinaryOperator(Stack<BigDecimal> operands, Stack<String> postfixStack) throws MathException {
         if (operands.size() < 2) {
             throw new MathException("Insufficient operands. Check your formula.");
         }
 
-        Float operand2 = operands.pop();
-        Float operand1 = operands.pop();
+        BigDecimal operand2 = operands.pop();
+        BigDecimal operand1 = operands.pop();
         int temp = 0;
 
         switch (postfixStack.pop().charAt(0)) {
             case 'd': /* Random Number */
-                for (int i = 1; i <= operand1; i++) {
+                for (int i = 1; i <= operand1.intValue(); i++) {
                     temp = temp + NumberUtilities.randomNumber(1, operand2.intValue());
                 }
-                operands.push((float)temp);
+                operands.push(new BigDecimal(temp));
                 break;
             case '^': /* Power Operator */
-                operands.push(new Float(Math.pow(operand1, operand2)));
+                operands.push(operand1.pow(operand2.intValue()));
                 break;
             case '*': /* Multiplication */
-                operands.push(operand1 * operand2);
+                operands.push(operand1.multiply(operand2));
                 break;
             case '/': /* Division */
-                if (operand2 == 0) {
+                if (operand2.intValue() == 0) {
                     throw new MathException("Division by zero not supported.");
                 } else {
-                    operands.push(operand1 / operand2);
+                    operands.push(operand1.divide(operand2, BigDecimal.ROUND_UNNECESSARY));
                 }
                 break;
             case '\\': /* Integer Division */
-                if (operand2 == 0) {
+                if (operand2.intValue() == 0) {
                     throw new MathException("Integer division by zero not supported.");
                 } else {
-                    operands.push((float)(operand1.intValue() / operand2.intValue()));
+                    operands.push(operand1.divide(operand2, BigDecimal.ROUND_DOWN));
                 }
                 break;
             case '%': /* Modulus */
-                if (operand2 == 0) {
+                if (operand2.intValue() == 0) {
                     throw new MathException("Modulus division by zero not supported.");
                 } else {
-                    operands.push(operand1 % operand2);
+                    operands.push(operand1.remainder(operand2));
                 }
                 break;
             case '+': /* Addition */
-                operands.push(operand1 + operand2);
+                operands.push(operand1.add(operand2));
                 break;
         }
     }
@@ -284,12 +285,12 @@ public class Expression {
         this.originalText = expression.getOriginalText();
     }
 
-    private Float evaluatePostfix() throws NumberFormatException, MathException {
+    private BigDecimal evaluatePostfix() throws NumberFormatException, MathException {
         if (postfixStack.isEmpty()) {
-            return (float) 0;
+            return new BigDecimal(0);
         }
 
-        Stack<Float> operands = new Stack<>();
+        Stack<BigDecimal> operands = new Stack<>();
 
         while (!postfixStack.isEmpty()) {
             String item = postfixStack.peek();
@@ -299,12 +300,15 @@ public class Expression {
                 if (index == -1) {
                     index = item.lastIndexOf('p');
                     if (index == -1) {
-                        operands.push(Float.parseFloat(item));
+                        BigDecimal value = new BigDecimalStringConverter().fromString(item);
+                        operands.push(value);
                     } else {
-                        operands.push(Float.parseFloat(item.substring(0, index)) * SMALL_STACK);
+                        BigDecimal value = new BigDecimalStringConverter().fromString(item.substring(0, index));
+                        operands.push(value.multiply(new BigDecimal(SMALL_STACK)));
                     }
                 } else {
-                    operands.push(Float.parseFloat(item.substring(0, index)) * FULL_STACK);
+                    BigDecimal value = new BigDecimalStringConverter().fromString(item.substring(0, index));
+                    operands.push(value.multiply(new BigDecimal(FULL_STACK)));
                 }
                 postfixStack.pop();
             } else {
