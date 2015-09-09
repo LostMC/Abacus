@@ -1,6 +1,5 @@
 package org.lostmc.abacus;
 
-import javafx.util.converter.BigDecimalStringConverter;
 import utility.NumberUtilities;
 import utility.StringUtilities;
 
@@ -300,14 +299,13 @@ public class Expression {
                 if (index == -1) {
                     index = item.lastIndexOf('p');
                     if (index == -1) {
-                        BigDecimal value = new BigDecimalStringConverter().fromString(item);
-                        operands.push(value);
+                        operands.push(new BigDecimal(item));
                     } else {
-                        BigDecimal value = new BigDecimalStringConverter().fromString(item.substring(0, index));
+                        BigDecimal value = new BigDecimal(item.substring(0, index));
                         operands.push(value.multiply(new BigDecimal(SMALL_STACK)));
                     }
                 } else {
-                    BigDecimal value = new BigDecimalStringConverter().fromString(item.substring(0, index));
+                    BigDecimal value = new BigDecimal(item.substring(0, index));
                     operands.push(value.multiply(new BigDecimal(FULL_STACK)));
                 }
                 postfixStack.pop();
